@@ -62,7 +62,8 @@ class Editor extends Component {
 				content: props.post.content,
 				categoryId: props.post.categoryId,
 				visibility: props.post.visibility,
-				tags: props.post.tags && props.post.tags.tag? props.post.tags.tag: []
+				tags: props.post.tags && props.post.tags.tag? props.post.tags.tag: [],
+				publishDate: new Date(props.post.date)
 			}
 		} else {
 			return {
@@ -70,7 +71,8 @@ class Editor extends Component {
 				content: "",
 				categoryId: "",
 				visibility: 0,
-				tags: []
+				tags: [],
+				publishDate: null
 			}
 		}
 
@@ -130,6 +132,13 @@ class Editor extends Component {
 	}
 
 	@autobind
+	handleChangeDate(date) {
+		this.setState({
+			publishDate: date
+		})
+	}
+
+	@autobind
 	handleSave() {
 		this.requestSave("0")
 	}
@@ -141,7 +150,7 @@ class Editor extends Component {
 
 	requestSave(visibility) {
 		const { post, currentBlog, mode } = this.props
-		const { title, categoryId, tags, editorMode } = this.state
+		const { title, categoryId, tags, editorMode, publishDate } = this.state
 		const { editor } = this.refs
 
 		let content = editor.getContent()
@@ -150,6 +159,7 @@ class Editor extends Component {
 			visibility: visibility,
 			content: content,
 			categoryId: categoryId,
+			publishDate: publishDate? publishDate.getTime() : null,
 			tags: {
 				tag: tags.join(",")
 			}
@@ -312,7 +322,7 @@ class Editor extends Component {
 
 	render() {
 		const { onFinish, categories, post } = this.props
-		const { title, content, categoryId, tags, showInfoBox, showLoading, showPreview, showEditorMode, popoverParent, editorMode, uploadFileCount, uploadFinishedFileCount } = this.state
+		const { title, content, categoryId, tags, publishDate, showInfoBox, showLoading, showPreview, showEditorMode, popoverParent, editorMode, uploadFileCount, uploadFinishedFileCount } = this.state
 
 		let uploadMessage = "파일을 넣어주세요."
 		let uploading = false
@@ -347,9 +357,10 @@ class Editor extends Component {
 					<div className="content preview_content" dangerouslySetInnerHTML={{__html: content}} />
 				</Dialog>
 
-				<EditorInfoDialog open={showInfoBox} category={categoryId} categories={categories} tags={tags}
+				<EditorInfoDialog open={showInfoBox} category={categoryId} categories={categories} tags={tags} date={publishDate}
 					onTagsChange={this.handleChangeTags}
 					onCategoryChange={this.handleChangeCategory}
+					onDateChange={this.handleChangeDate}
 					onRequestClose={this.handlePublishDialogClose}
 					onRequestSave={this.handleSave}
 					onRequestPublish={this.handlePublish} />

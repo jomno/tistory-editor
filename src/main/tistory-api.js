@@ -114,7 +114,10 @@ const makePostFormData = (auth, blogName, post) => {
   }
   if (post.tags.tag) {
     formdata.append("tag", post.tags.tag)
-  }
+	}
+	if (post.publishDate) {
+		formdata.append("published", post.publishDate)
+	}
   return formdata
 }
 
