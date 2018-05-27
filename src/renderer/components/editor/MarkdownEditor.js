@@ -48,10 +48,14 @@ class MarkdownEditor extends Component {
 
   componentWillMount() {
 		ipcRenderer.on("finish-add-file", this.handleFinishUploadFile)
+		window.addEventListener('resize', this.handleResize)
 	}
 
 	componentWillUnmount() {
 		ipcRenderer.removeListener("finish-add-file", this.handleFinishUploadFile)
+		if (window) {
+			window.removeEventListener('resize', this.handleResize)
+		}
 	}
 
 	componentDidMount() {
@@ -65,7 +69,13 @@ class MarkdownEditor extends Component {
   
   handleEditorDidMount(editor) {
     // TODO
-  }
+	}
+	
+	@autobind
+	handleResize(e) {
+		const { editor } = this.refs
+		editor.editor.layout()
+	}
 
 	@autobind
   handleFinishUploadFile(e, fileUrl) {
@@ -170,11 +180,12 @@ class MarkdownEditor extends Component {
 		// }
     
     const options = {
-      lineNumbers: 'on',
+      lineNumbers: 'off',
       scrollBeyondLastLine: false,
       minimap: {
         enabled: false
-      }
+			},
+			renderLineHighlight: 'none'
     }
 
 		const iconButtonStyle = {

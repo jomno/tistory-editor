@@ -3,6 +3,19 @@ const url = require('url');
 const webpack = require("webpack");
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
+const plugins = [
+	new MonacoWebpackPlugin({
+		languages: [
+			'markdown'
+		]
+	})
+]
+if (process.env.NODE_ENV === "production") {
+	plugins.push(new webpack.DefinePlugin({
+		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+	}))
+}
+
 module.exports = {
 	entry: [
 		path.join(__dirname, 'src', 'renderer', 'index')
@@ -16,14 +29,7 @@ module.exports = {
     }),
 		filename: 'editor.min.js'
 	},
-	plugins: process.env.NODE_ENV !== "production" ? [
-    new MonacoWebpackPlugin(),
-  ] : [
-    new MonacoWebpackPlugin(),
-		new webpack.DefinePlugin({
-		  'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
-		})
-	],
+	plugins: plugins,
 	externals: {
     "jsdom": {},
 		"codemirror": "CodeMirror",
