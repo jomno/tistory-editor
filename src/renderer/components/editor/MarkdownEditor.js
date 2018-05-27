@@ -1,8 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { ipcRenderer, clipboard } from 'electron'
 import autobind from 'autobind-decorator'
 import Codemirror from 'react-codemirror'
+import MonacoEdditor from 'react-monaco-editor'
 import toMarkdown from 'to-markdown'
 import marked from 'marked'
 import MarkdownHelper from './MarkdownHelper'
@@ -54,13 +55,17 @@ class MarkdownEditor extends Component {
 	}
 
 	componentDidMount() {
-		const { editor } = this.refs
-		let cm = editor.getCodeMirror()
-		cm.on("paste", this.handlePaste)
+		// const { editor } = this.refs
+		// let cm = editor.getCodeMirror()
+		// cm.on("paste", this.handlePaste)
 
-		const keymap = navigator.userAgent.indexOf('Macintosh') > 0 ? MacKeymap : PcKeymap
-		keymap.map(map => cm.addKeyMap(map))
-	}
+		// const keymap = navigator.userAgent.indexOf('Macintosh') > 0 ? MacKeymap : PcKeymap
+		// keymap.map(map => cm.addKeyMap(map))
+  }
+  
+  handleEditorDidMount(editor) {
+    // TODO
+  }
 
 	@autobind
   handleFinishUploadFile(e, fileUrl) {
@@ -157,13 +162,21 @@ class MarkdownEditor extends Component {
 		const { onOpenFile } = this.props
     const { value, openGooglePhotos } = this.state
 
+    // const options = {
+		// 	lineNumbers: false,
+		// 	lineWrapping: true,
+		// 	mode: 'markdown',
+		// 	theme:'default'
+		// }
+    
     const options = {
-			lineNumbers: false,
-			lineWrapping: true,
-			mode: 'markdown',
-			theme:'default'
-		}
-		
+      lineNumbers: 'on',
+      scrollBeyondLastLine: false,
+      minimap: {
+        enabled: false
+      }
+    }
+
 		const iconButtonStyle = {
 			padding: '5px',
 			minWidth: '34px',
@@ -172,7 +185,7 @@ class MarkdownEditor extends Component {
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<div className="editor-toolbar">
 					<FlatButton onClick={this.handleHeader2} style={iconButtonStyle}>H2</FlatButton>
 					<FlatButton onClick={this.handleHeader3} style={iconButtonStyle}>H3</FlatButton>
@@ -183,10 +196,12 @@ class MarkdownEditor extends Component {
 					<FlatButton onClick={this.handleGooglePhotos} style={iconButtonStyle} icon={<img src='../src/images/google-photos-logo.png' />} />
 					<FlatButton onClick={onOpenFile} style={iconButtonStyle} icon={<IconFileAttachment />} />
 				</div>
-				<Codemirror ref="editor" options={options} value={value}
-					onChange={this.handleChangeContent} />
+        <MonacoEdditor
+          ref="editor" language="markdown" theme="vs" value={value} options={options}
+          editorDidMount={this.handleEditorDidMount}
+          onChange={this.handleChangeContent} />
 				<GooglePhotosDialog open={openGooglePhotos} onClose={this.handleCloseGooglePhotos} onSelectImage={this.handleInsertImage} />
-			</div>
+			</Fragment>
 		)
   }
 }

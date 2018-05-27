@@ -1,5 +1,7 @@
-var path = require('path');
-var webpack = require("webpack");
+const path = require('path');
+const url = require('url');
+const webpack = require("webpack");
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
 	entry: [
@@ -7,10 +9,17 @@ module.exports = {
 	],
 	output: {
 		path: path.join(__dirname, 'app'),
-		publicPath: '/assets/',
+		publicPath: url.format({
+      pathname: path.join(__dirname, 'app/'),
+      protocol: 'file:',
+      slashes: true
+    }),
 		filename: 'editor.min.js'
 	},
-	plugins: process.env.NODE_ENV !== "production" ? [] : [
+	plugins: process.env.NODE_ENV !== "production" ? [
+    new MonacoWebpackPlugin(),
+  ] : [
+    new MonacoWebpackPlugin(),
 		new webpack.DefinePlugin({
 		  'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
 		})

@@ -82,6 +82,9 @@ body { font-size:16px; line-height:1.6em; font-family: "Roboto", sans-serif; bac
 .editor .mce-tinymce,
 .editor .Quill,
 .editor .ReactCodeMirror { position: absolute; top:0; bottom: 0; left: 0; right: 0; box-shadow:none; overflow:auto }
+.editor .react-monaco-editor-container {
+  position: absolute; top:0; bottom: 0; left: 0; right: 0; box-shadow:none; overflow:hidden; 
+}
 
 .editor .Quill .ql-toolbar,
 .editor .editor-toolbar,
